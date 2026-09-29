@@ -1,16 +1,21 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AppShell } from '@/components/app-shell'
-import { AdminPage } from '@/pages/AdminPage'
-import { ChatPage } from '@/pages/ChatPage'
+
+// Route-level code splitting: each page ships as its own chunk.
+const ChatPage = lazy(() => import('@/pages/ChatPage').then((m) => ({ default: m.ChatPage })))
+const AdminPage = lazy(() => import('@/pages/AdminPage').then((m) => ({ default: m.AdminPage })))
 
 export default function App() {
   return (
     <BrowserRouter>
       <AppShell>
-        <Routes>
-          <Route path="/" element={<ChatPage />} />
-          <Route path="/admin" element={<AdminPage />} />
-        </Routes>
+        <Suspense fallback={null}>
+          <Routes>
+            <Route path="/" element={<ChatPage />} />
+            <Route path="/admin" element={<AdminPage />} />
+          </Routes>
+        </Suspense>
       </AppShell>
     </BrowserRouter>
   )
